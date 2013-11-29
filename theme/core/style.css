@@ -1,0 +1,17 @@
+/* 
+* Description:´This is the core theme for Oden.
+*/
+
+// Genral settings 
+html {}
+body {
+	background-color: #CCC;
+	font: 1em Verdana, Arial, Helvetica, sans-serif;
+}
+
+#header, #main, #footer {
+	margin: 0 auto;
+	width: 90%;
+	background-color: #fff;
+	padding:1em;
+}

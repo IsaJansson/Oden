@@ -43,7 +43,7 @@ class CMDatabase {
 	} 
 
 	// Return last inserted id
-	public function LastInsertedId() {
+	public function LastInsertId() {
 		return $this->db->lastinsertid();
 	}
 

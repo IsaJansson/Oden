@@ -79,4 +79,16 @@ function render_views() {
   return COden::Instance()->views->Render();
 }
 
+// Login menu. Creates a menu which reflects if the user if logged in or not.
+function login_menu() {
+  $oden = COden::Instance();
+  if($oden->user->IsAuthenticated()) {
+    $items = "<a href='" . create_url('user/logout') . "'>Logout</a>";
+  }
+  else {
+    $items = "<a href='" . create_url('user/login') . "'>Login</a>";
+  }
+  return "<nav>$items</nav>";
+}
+
 

@@ -15,6 +15,28 @@ class CSession {
 	public function __construct($key) {
    		$this->key = $key;
   	}
+
+  	// Set values 
+  	public function __set($key, $value) {
+  		$this->data[$key] = $value;
+  	}
+
+  	// Get values 
+  	public function __get($key) {
+  		return isset($this->data[$key]) ? $this->data[$key] : null;
+  	}
+
+  	// Get, Set or Unset the authenticated user
+  	public function SetAuthenticatedUser($profile) {
+  		$this->data['authenticated_user'] = $profile;
+  	}
+  	public function UnsetAuthenticatedUser() {
+  		unset($this->data['authenticated_user']);
+  	}
+  	public function GetAuthenticatedUser() {
+  		return $this->authenticated_user;
+  	}
+
 	
 	// Store values in session
 	public function StoreInSession(){

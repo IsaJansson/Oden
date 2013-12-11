@@ -97,14 +97,14 @@ a:visited {
   border: solid 2px #2aaa00;
 }
 
-.info, .notice {
+.info, .alert {
   display: inline-block;
   padding:5px;
   background-color: #00d4ff;
   border: solid 2px #0083ff;
 }
 
-.warning, .error, .alert {
+.warning, .error, .notice {
   display: inline-block;
   padding:5px;
   background-color: #ff653a;

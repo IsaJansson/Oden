@@ -5,22 +5,26 @@
 */
 
 class CObject {
-	public $config;
-	public $request;
-	public $data;
-	public $db;
-	public $views;
-    public $session;
+	protected $config;
+	protected $request;
+	protected $data;
+	protected $db;
+	protected $views;
+    protected $session;
+    protected $user;
 
 	// Constructor 
-	protected function __construct() {
-		$oden = COden::Instance();
+	protected function __construct($oden=null) {
+		if(!$oden) {
+			$oden = COden::Instance();
+		}
 		$this->config = &$oden->config;
 		$this->request = &$oden->request;
 		$this->data = &$oden->data;
 		$this->db = &$oden->db;
 		$this->views = &$oden->views;
     	$this->session  = &$oden->session;
+    	$this->user = &$oden->user;
 	}
 
 	// Redirect to another url and store the session
@@ -38,5 +42,24 @@ class CObject {
 	    $this->session->StoreInSession();
 	    header('Location: ' . $this->request->CreateUrl($url));
     }
+
+		/**
+		 * Redirect to a method within the current controller. Defaults to index-method. Uses RedirectTo().
+         * @param string method name the method, default is index method.
+         */
+        protected function RedirectToController($method=null) {
+    		$this->RedirectTo($this->request->controller, $method);
+  		}
+
+        /**
+         * Redirect to a controller and method. Uses RedirectTo().
+         * @param string controller name the controller or null for current controller.
+         * @param string method name the method, default is current method.
+         */
+        protected function RedirectToControllerMethod($controller=null, $method=null) {
+            $controller = is_null($controller) ? $this->request->controller : null;
+            $method = is_null($method) ? $this->request->method : null;          
+    		$this->RedirectTo($this->request->CreateUrl($controller, $method));
+  		}
 
 }

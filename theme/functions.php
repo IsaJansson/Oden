@@ -7,8 +7,8 @@
  // Print debuginformation from the framework.
 function get_debug() {
   $oden = COden::Instance();  
-   if(empty($oden->config['debug'])) {
-    return;
+  if(empty($oden->config['debug'])) {
+      return;
   }
 
   // Get the debug output 
@@ -30,10 +30,10 @@ function get_debug() {
     $html .= "<p>Page was loaded in " . round(microtime(true) - $oden->timer['first'], 5)*1000 . " msecs.</p>";
   }    
   if(isset($oden->config['debug']['oden']) && $oden->config['debug']['oden']) {
-    $html .= "<hr><h3>Debuginformation</h3><p>The content of Codendia:</p><pre>" . htmlent(print_r($oden, true)) . "</pre>";
+    $html .= "<hr><h3>Debuginformation</h3><p>The content of COden:</p><pre>" . htmlent(print_r($oden, true)) . "</pre>";
   }    
   if(isset($oden->config['debug']['session']) && $oden->config['debug']['session']) {
-    $html .= "<hr><h3>SESSION</h3><p>The content of Codendia->session:</p><pre>" . htmlent(print_r($oden->session, true)) . "</pre>";
+    $html .= "<hr><h3>SESSION</h3><p>The content of COden->session:</p><pre>" . htmlent(print_r($oden->session, true)) . "</pre>";
     $html .= "<p>The content of \$_SESSION:</p><pre>" . htmlent(print_r($_SESSION, true)) . "</pre>";
   }  
   return $html;
@@ -82,13 +82,21 @@ function render_views() {
 // Login menu. Creates a menu which reflects if the user if logged in or not.
 function login_menu() {
   $oden = COden::Instance();
-  if($oden->user->IsAuthenticated()) {
-    $items = "<a href='" . create_url('user/logout') . "'>Logout</a>";
-  }
-  else {
-    $items = "<a href='" . create_url('user/login') . "'>Login</a>";
+  if($oden->user['isAuthenticated']) {
+    $items = "<a href='" . create_url('user/profile') . "'><img class='gravatar' src='" . get_gravatar(20) . "' alt=''>" . $oden->user['acronym'] . "</a> ";
+    if($oden->user['hasRoleAdministrator']) {
+      $items .= "<a href='" . create_url('acp') . "'>acp</a> ";
+    }
+    $items .= "<a href='" . create_url('user/logout') . "'>logout</a> ";
+  } else {
+    $items = "<a href='" . create_url('user/login') . "'>login</a> ";
   }
   return "<nav>$items</nav>";
+}
+
+// Get a gravatar based on the users email
+function get_gravatar($size=null) {
+  return 'http://www.gravatar.com/avatar/' . md5(strtolower(trim(COden::Instance()->user['email']))) . '.jpg?' . ($size ? "s=$size" : null);
 }
 
 

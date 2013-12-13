@@ -73,7 +73,10 @@ body {
 
 /* Navbar ********************************/
 
-
+#login_menu{float:right;font-size:smaller;}
+#login_menu img.gravatar{vertical-align:middle;}
+#login_menu a{text-decoration:none;}
+#login_menu a:hover{text-decoration:underline;}
 
 /* Fonts *********************************/
 
@@ -111,4 +114,10 @@ a:visited {
   border: solid 2px #ad2500;
 }
 
+.validation-failed {
+  border:2px solid red;
+}
+.validation-message {
+  color:red;font-size:smaller;
+}
 

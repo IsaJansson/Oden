@@ -9,10 +9,11 @@ error_Reporting(-1);
 ini_set('display_errors', 1);
 
 $oden->config['debug']['session'] = false;
-$oden->config['debug']['timer'] = false;
+$oden->config['debug']['timer'] = true;
 $oden->config['debug']['oden'] = false;
-$oden->config['debug']['db-num-queries'] = false;
-$oden->config['debug']['db-queries'] = false;
+$oden->config['debug']['user'] = true;
+$oden->config['debug']['db-num-queries'] = true;
+$oden->config['debug']['db-queries'] = true;
 $oden->config['debug']['timestamp'] = false;
 $oden->config['debug']['memory'] = false;
 
@@ -30,31 +31,12 @@ $oden->config['url_type'] = 1;
 // Set a base_url to use other then the default
 // static_url = Base url for cookie-less domain for all static assets, like images, css and js files.
 $oden->config['base_url'] = null;
-$oden->config['static_url'] = null;
 
 // How to hash password of new users, choose from: plain, md5salt, md5, sha1salt, sha1.
 $oden->config['hashing_algorithm'] = 'sha1salt';
 
-// Allow or disallow creation of new user accounts. 
-// Set to false to disable that anyone can create a new user, set true to enable.
-$oden->config['create_new_users'] = false;
-
-/**
- * Create a secret key and use it for remote management. Make it long through sha1 or
- * similair. Disable it by setting to null/false.
- *
- * Currentoden supporting:
- * module/action/crontab/[secret_key]
- */
-$oden->config['secret_key'] = false;
-
-// Use gzip output handler to reduce size of resulting page.
-$oden->config['themerender_buffer'] = false;
-$oden->config['themerender_gzip'] = false;
-
-// Settings for caching.
-//$oden->config['cache']['age_default'] = 60*60*7;  // Default age for all cachable objects
-//$oden->config['cache']['age_override'] = 60*60*7; // Give all cachable objects this age, use 0 to skip cache.
+// Allow or disallow creation of new user accounts.
+$oden->config['create_new_users'] = true;
 
 // Define session name 
 $oden->config['session_name'] = preg_replace('/[:\.\/-_]/', '', $_SERVER["SERVER_NAME"]);
@@ -83,7 +65,8 @@ $oden->config['controllers'] = array(
   'index'     => array('enabled' => true,'class' => 'CCIndex'),
   'developer' => array('enabled' => true,'class' => 'CCDeveloper'),
   'guestbook' => array('enabled' => true,'class' => 'CCGuestbook'),
-  'user'	=> array('enabled' => true, 'class' => 'CCUser'),
+  'user'	  => array('enabled' => true,'class' => 'CCUser'),
+  'acp'		  => array('enabled' => true,'class' => 'CCAdminControlPanel'),
 );
 
 // Settings for the theme

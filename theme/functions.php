@@ -53,6 +53,16 @@ function get_messages_from_session() {
   return $html;
 }
 
+// Escape data to make it safe to write in the browser
+function esc($str) {
+  return htmlEnt($str);
+}
+
+// Display diff of time between now and a datetime
+function time_diff($start) {
+  return formatDateTimeDiff($start);
+}
+
 // Create a url be prepending the base_url 
 function base_url($url = null) {
   return COden::Instance()->request->base_url . trim($url, '/');
@@ -99,4 +109,7 @@ function get_gravatar($size=null) {
   return 'http://www.gravatar.com/avatar/' . md5(strtolower(trim(COden::Instance()->user['email']))) . '.jpg?' . ($size ? "s=$size" : null);
 }
 
+function filter_data($data, $filter) {
+  return CMContent::Filter($data, $filter);
+}
 

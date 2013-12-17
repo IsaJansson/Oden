@@ -11,11 +11,11 @@ ini_set('display_errors', 1);
 $oden->config['debug']['session'] = false;
 $oden->config['debug']['timer'] = true;
 $oden->config['debug']['oden'] = false;
-$oden->config['debug']['user'] = true;
+//$oden->config['debug']['user'] = true;
 $oden->config['debug']['db-num-queries'] = true;
 $oden->config['debug']['db-queries'] = true;
-$oden->config['debug']['timestamp'] = false;
-$oden->config['debug']['memory'] = false;
+//$oden->config['debug']['timestamp'] = false;
+//$oden->config['debug']['memory'] = false;
 
 // Set database(s).
 $oden->config['database'][0]['dsn'] = 'sqlite:' . ODEN_SITE_PATH . '/data/.ht.sqlite';
@@ -67,6 +67,9 @@ $oden->config['controllers'] = array(
   'guestbook' => array('enabled' => true,'class' => 'CCGuestbook'),
   'user'	  => array('enabled' => true,'class' => 'CCUser'),
   'acp'		  => array('enabled' => true,'class' => 'CCAdminControlPanel'),
+  'content'	  => array('enabled' => true,'class' => 'CCContent'),
+  'blog'	  => array('enabled' => true,'class' => 'CCBlog'),	
+  'page'	  => array('enabled' => true,'class' => 'CCpage'),
 );
 
 // Settings for the theme

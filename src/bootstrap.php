@@ -1,6 +1,6 @@
 <?php 
 
-/* 
+/**
 * Bootstrapping, setting up the core and loadning it.
 * @package OdenCore
 */
@@ -20,7 +20,7 @@ function autoload($aClassName) {
 spl_autoload_register('autoload');
 
 // Helper, wrap html_entites with correct character encoding
-function htmlent($str, $flags = ENT_COMPAT) {
+function htmlEnt($str, $flags = ENT_COMPAT) {
   return htmlentities($str, $flags, COden::Instance()->config['character_encoding']);
 }
 
@@ -125,4 +125,42 @@ function formatDateTimeDiff($start, $startTimeZone=null, $end=null, $endTimeZone
   
   // Prepend 'since ' or whatever you like
   return $interval->format($format);
+}
+
+// Helper, make clickable links from URLs in text
+function makeClickable($text) {
+  return preg_replace_callback(
+    '#\bhttps?://[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', 
+    create_function(
+      '$matches',
+      'return "<a href=\'{$matches[0]}\'>{$matches[0]}</a>";'
+    ),
+    $text
+  );
+}
+
+
+/**
+ * Helper, BBCode formatting converting to HTML.
+ * @param string $text, The text to be converted.
+ * @return string, the formatted text.
+ */
+function bbcode2html($text) {
+  $search = array( 
+    '/\[b\](.*?)\[\/b\]/is', 
+    '/\[i\](.*?)\[\/i\]/is', 
+    '/\[u\](.*?)\[\/u\]/is', 
+    '/\[img\](https?.*?)\[\/img\]/is', 
+    '/\[url\](https?.*?)\[\/url\]/is', 
+    '/\[url=(https?.*?)\](.*?)\[\/url\]/is' 
+    );   
+  $replace = array( 
+    '<strong>$1</strong>', 
+    '<em>$1</em>', 
+    '<u>$1</u>', 
+    '<img src="$1" />', 
+    '<a href="$1">$1</a>', 
+    '<a href="$1">$2</a>' 
+    );     
+  return preg_replace($search, $replace, $text);
 }

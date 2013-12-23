@@ -60,9 +60,12 @@ class CMContent extends CObject implements IHasSQL, ArrayAccess {
 	      $this->db->ExecuteQuery(self::SQL('insert content'), array('home', 'page', 'Home page', "This is a demo page, this could be your personal home-page.\n\nOden is a PHP-based MVC-inspired Content management Framework.", 'plain', $this->user['id']));
 	      $this->db->ExecuteQuery(self::SQL('insert content'), array('about', 'page', 'About page', "This is a demo page, this could be your personal about-page.\n\nLydia is used as a tool to educate in MVC frameworks.", 'plain', $this->user['id']));
 	      $this->db->ExecuteQuery(self::SQL('insert content'), array('download', 'page', 'Download page', "This is a demo page, this could be your personal download-page.\n\nYou can download your own copy of Oden from https://github.com/isajansson/oden.", 'plain', $this->user['id']));
-	      $this->db->ExecuteQuery(self::SQL('insert content'), array('bbcode', 'page', 'Page with BBCode', "This is a demo page with some BBCode-formatting.\n\n[b]Text in bold[/b] and [i]text in italic[/i] and [url=http://dbwebb.se]a link to dbwebb.se[/url]. You can also include images using bbcode, such as the Oden logo: [img]http://student.bth.se/~isja13/phpmvc/me/kmom05/me-sida/oden/theme/core/logo.png[/img]", 'bbcode', $this->user['id']));
+	      $this->db->ExecuteQuery(self::SQL('insert content'), array('bbcode', 'page', 'Page with BBCode', "This is a demo page with some BBCode-formatting.\n\n[b]Text in bold[/b] and [i]text in italic[/i] and [url=http://dbwebb.se]a link to dbwebb.se[/url]. You can also include images using bbcode, such as the Oden logo: [img]http://student.bth.se/~isja13/phpmvc/me/kmom05/me-sida/oden/theme/core/img/logo.png[/img]", 'bbcode', $this->user['id']));
 	      $this->db->ExecuteQuery(self::SQL('insert content'), array('htmlpurify', 'page', 'Page with HTMLPurifier', "This is a demo page with some HTML code intended to run through <a href='http://htmlpurifier.org/'>HTMLPurify</a>. Edit the source and insert HTML code and see if it works.\n\n<b>Text in bold</b> and <i>text in italic</i> and <a href='http://dbwebb.se'>a link to dbwebb.se</a>. JavaScript, like this: <javascript>alert('hej');</javascript> should however be removed.", 'htmlpurify', $this->user['id']));
-      	  $this->AddMessage('success', 'Successfully created the database tables and created a default "Hello World" blog post, owned by you.');
+      	  $this->db->ExecuteQuery(self::SQL('insert content'), array('markdownextra', 'page', 'Page with Markdown Extra', "This is a demo page with Med filtret Markdown Extra kan man formattera **fet text**, *kursiv text* eller länk till [dbwebb.se](http://dbwebb.se) på ett enkelt sätt. Vanliga HTML-taggar fungerar också.", 'markdownextra', $this->user['id']));
+          $this->db->ExecuteQuery(self::SQL('insert content'), array('smartypants', 'page', 'Page with Smartypants', "This is a demo page with some BBCode-formatting.\n\n[b]Text in bold[/b] and [i]text in italic[/i] and [url=http://dbwebb.se]a link to dbwebb.se[/url]. You can also include images using bbcode, such as the Oden logo: [img]http://student.bth.se/~isja13/phpmvc/me/kmom05/me-sida/oden/theme/core/logo.png[/img]", 'smartypants', $this->user['id']));
+          $this->db->ExecuteQuery(self::SQL('insert content'), array('make_clickable', 'page', 'Page with make_clickable', "This is a demo page with some the filter Make Cliakcble wich makes this link clickable: <a href='http://dbwebb.se'>a link to dbwebb.se</a>.", 'make_clickable', $this->user['id']));
+          $this->AddMessage('success', 'Successfully created the database tables and created the default blog posts and pages owned by you.');
     	}
     	catch(Exception$e) {
     		die("$e<br/>Failed to open database: " . $this->config['database'][0]['dsn']);
@@ -74,16 +77,15 @@ class CMContent extends CObject implements IHasSQL, ArrayAccess {
  	* @return boolean, true if success else false.
     */
     public function Save() {
-    	$msg = null;
-    	if($this['id']) {
-    		$this->db->ExecuteQuery(self::SQL('update content'), array($this['key'], $this['type'], $this['title'], $this['data'], $this['filter'], $this['id']));
-      		$msg = 'update';
-    	}
-    	else {
-    		$this->db->ExecuteQuery(self::SQL('insert content'), array($this['key'], $this['type'], $this['title'], $this['data'], $this['filter'], $this->user['id']));
-    		$this['id'] = $this->db->LastInsertId();
-    		$msg = 'create';
-    	}
+    	  $msg = null;
+    	  if($this['id']) {
+          $this->db->ExecuteQuery(self::SQL('update content'), array($this['key'], $this['type'], $this['filter'], $this['title'], $this['data'], $this['id']));
+          $msg = 'updated';
+          } else {
+          $this->db->ExecuteQuery(self::SQL('insert content'), array($this['key'], $this['type'], $this['filter'], $this['title'], $this['data'], $this->user['id']));
+          $this['id'] = $this->db->LastInsertId();
+          $msg = 'created';
+          }
     	$rowcount = $this->db->RowCount();
     	if($rowcount) {
     		$this->AddMessage('success', "Successfully {$msg} content '{$this['key']}'.");
@@ -133,12 +135,12 @@ class CMContent extends CObject implements IHasSQL, ArrayAccess {
     * @return string with filtered data
     */
     public static function Filter($data, $filter) {
-    	$accepted_filters = array('htmlpurify','bbcode','plain','make_clickable','markdownextra', 'smartypants');
-	    if(in_array($filter,$accepted_filters)) {
-	      $data = CTextFilter::filter($data,$filter);
+    	$valid = array('htmlpurify','bbcode','plain','make_clickable','markdownextra', 'smartypants');
+	    if(in_array($filter, $valid)) {
+	      $data = CTextFilter::filter($data, $filter);
 	    } 
 	    else {
-	      $data = CTextFilter::filter($data,"plain");
+	      $data = CTextFilter::filter($data, "plain");
 		}
 		return $data;
     }

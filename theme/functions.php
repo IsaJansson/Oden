@@ -85,8 +85,8 @@ function current_url() {
 }
 
 // Render all views 
-function render_views() {
-  return COden::Instance()->views->Render();
+function render_views($region='default') {
+  return COden::Instance()->views->Render($region);
 }
 
 // Login menu. Creates a menu which reflects if the user if logged in or not.
@@ -113,3 +113,10 @@ function filter_data($data, $filter) {
   return CMContent::Filter($data, $filter);
 }
 
+/**
+* Check if the region has a view.
+* @param $region string, the region to draw the content into
+*/
+function region_has_content($region='default' /*...*/) {
+  return COden::Instance()->views->RegionHasView(func_get_args());
+}

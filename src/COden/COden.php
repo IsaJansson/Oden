@@ -122,10 +122,10 @@ class COden implements ISingleton {
 		// Get the paths and settings for the theme.
 		$themeName = $this->config['theme']['name'];
 		$themePath = ODEN_INSTALL_PATH . "/theme/{$themeName}";
-		$themeUrl = $this->request->base_url . "theme/{$themeName}";
+		$themeUrl  = $this->request->base_url . "theme/{$themeName}";
 
 		// Add stylesheet path to the $oden->data array
-		$this->data['stylesheet'] = "{$themeUrl}/style.css";
+		$this->data['stylesheet'] = "{$themeUrl}/".$this->config['theme']['stylesheet'];
 
 		// Incude the global functions.php and the ones that are parts of the theme.
 		$oden = &$this;
@@ -138,7 +138,11 @@ class COden implements ISingleton {
 		// Extract $oden->data to own variables and handover to the template  file.
 		extract($this->data);
 		extract($this->views->GetData());  
-		include("{$themePath}/default.tpl.php");
+		if(isset($this->config['theme']['data'])) {
+      		extract($this->config['theme']['data']);
+    	}
+		$templateFile = (isset($this->config['theme']['template_file'])) ? $this->config['theme']['template_file'] : 'default.tpl.php';
+		include("{$themePath}/{$templateFile}");
 	}
 
 }

@@ -70,8 +70,17 @@ function base_url($url = null) {
 
 // Prepend the theme_url, which is the url to the current theme directory.
 function theme_url($url) {
-  $oden = COden::Instance();
-  return "{$oden->request->base_url}theme/{$oden->config['theme']['name']}/{$url}";
+return create_url(COden::Instance()->themeUrl . "/{$url}");
+}
+
+/**
+* Prepend the theme_parent_url, which is the url to the parent theme directory.
+*
+* @param $url string the url-part to prepend.
+* @returns string the absolute url.
+*/
+function theme_parent_url($url) {
+  return create_url(COden::Instance()->themeParentUrl . "/{$url}");
 }
 
 // Create a url to an internal resource.

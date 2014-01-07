@@ -23,7 +23,6 @@ audio:not([controls]){display:none;}
 /* Style using less **************************************************/
 @bgcolor1: #eee;
 @bgcolor2: #fff;
-@bgtest: hsla(0,0%,90%,0.5);
 @color: #333;
 @link-color: #600;
 @magic-number:22px;
@@ -96,6 +95,18 @@ tfoot{font-style:italic;}
   a:hover{text-decoration:underline;}
 }
 
+/* Navbar ***********************************************************/
+
+#navbar{
+  ul.menu{list-style-type:none;padding:2px 8px;margin:0;
+    li{padding:0;margin:0;display:inline;
+      a{padding:6px 8px;text-decoration:none;border:2px solid transparent;
+        &:hover{background:#ddd;border:2px solid #999;}
+        &.selected{background:#ccc;border:2px solid #999;}
+      }
+    }
+  }
+}
 
 /* Banner **********************************************************/
 #banner {display:table;margin-bottom:@magic-number/2;
@@ -110,7 +121,7 @@ tfoot{font-style:italic;}
 /* The flash area. *************************************************/
 #outer-wrap-flash{}
 #inner-wrap-flash{.wrap(); height:@magic-number*3; margin-bottom:@magic-number;}
-#flash{.column(12); background-color:@bgtest; height:100%;}
+#flash{.column(12); height:100%;}
 
 
 /* The featured area. *************************************************/
@@ -120,7 +131,7 @@ tfoot{font-style:italic;}
 
 #featured-first,
 #featured-middle,
-#featured-last{.column(4); background-color:@bgtest; height:100%;}
+#featured-last{.column(4);  height:100%;}
 
 
 /* The main content area. ***********************************************/
@@ -128,8 +139,8 @@ tfoot{font-style:italic;}
 #inner-wrap-main{.wrap; margin-bottom:@magic-number;}
 #main{}
 
-#primary{.column(8); background-color:@bgtest;}
-#sidebar{.column(4); background-color:@bgtest;}
+#primary{.column(8);}
+#sidebar{.column(4);}
 
 
 /* The triptych area. *****************************************************/
@@ -139,11 +150,11 @@ tfoot{font-style:italic;}
 
 #triptych-first,
 #triptych-middle,
-#triptych-last{.column(4); background-color:@bgtest; height:100%;}
+#triptych-last{.column(4);  height:100%;}
 
 
 /* The footer column area. ***************************************************/
-#outer-wrap-footer-column{background-color:@bgtest; border-top:1px solid #bbb;}
+#outer-wrap-footer-column{ border-top:1px solid #bbb;}
 #inner-wrap-footer-column{.wrap(); height:@magic-number*5; padding-bottom:@magic-number;}
 #footer{height:inherit;}
 
@@ -155,7 +166,7 @@ background-color:lighten(@bgtest,10%);}
 
 
 /* The footer area. ***********************************************************/
-#outer-wrap-footer{background-color:@bgtest;}
+#outer-wrap-footer{}
 #inner-wrap-footer{.wrap();}
 #footer{.column(12); font-size:0.80em; color:#666; padding-bottom:@magic-number;}
  

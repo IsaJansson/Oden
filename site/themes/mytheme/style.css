@@ -1,0 +1,18 @@
+@import url(../../../theme/grid/style.css);
+
+html{background-color:#FFE2B3;}
+body{background-color:#D0DCE1;}
+#outer-wrap-header{background-color:#FFE2B3;border-bottom:2px solid #FFCE80}
+#outer-wrap-footer{background-color:#FFE2B3}
+a{color:#436370}
+
+#navbar{
+  ul.menu{list-style-type:none;padding:2px 8px;margin:0;
+    li{padding:0;margin:0;display:inline;
+      a{padding:6px 8px;text-decoration:none;border:2px solid transparent;
+        &:hover{background:#ddd;border:2px solid #999;}
+        &.selected{background:#ccc;border:2px solid #999;}
+      }
+    }
+  }
+}

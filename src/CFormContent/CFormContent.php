@@ -18,12 +18,15 @@ class CFormContent extends CForm {
              ->AddElement(new CFormElementTextarea('data', array('label'=>'Content:', 'value'=>$content['data'])))
              ->AddElement(new CFormElementText('type', array('value'=>$content['type'])))
              ->AddElement(new CFormElementSelect('filter', array('value'=>$content['filter'])))
-             ->AddElement(new CFormElementSubmit($save, array('callback'=>array($this, 'DoSave'), 'callback-args'=>array($content))));
+             ->AddElement(new CFormElementSubmit($save, array('callback'=>array($this, 'DoSave'), 'callback-args'=>array($content))))
+             ->AddElement(new CFormElementSubmit('delete', array('callback'=>array($this, 'DoDelete'), 'callback-args'=>array($content))));
 
         $this->SetValidation('title', array('not_empty'))
              ->SetValidation('key', array('not_empty'));
+
     }
-  
+
+
     // Callback to save the form content to database
 	public function DoSave($form, $content) {
 	    $content['id']    = $form['id']['value'];
@@ -34,4 +37,11 @@ class CFormContent extends CForm {
         $content['filter'] = $form['filter']['value'];
 	    return $content->Save();
 	 }
+
+    // Callback to delete the content.
+    public function DoDelete($form, $content) {
+        $content['id'] = $form['id']['value'];
+        $content->Delete();
+        COden::Instance()->RedirectTo('content');
+    }
 }

@@ -2,20 +2,16 @@
 
 /* 
 * Site configuration file, this file is changed for each site.
+* Error reporting 
 */
-
-// Error reporting 
 error_Reporting(-1);
 ini_set('display_errors', 1);
 
 $oden->config['debug']['session'] = false;
 $oden->config['debug']['timer'] = true;
 $oden->config['debug']['oden'] = false;
-//$oden->config['debug']['user'] = true;
 $oden->config['debug']['db-num-queries'] = true;
 $oden->config['debug']['db-queries'] = true;
-//$oden->config['debug']['timestamp'] = false;
-//$oden->config['debug']['memory'] = false;
 
 // Set database(s).
 $oden->config['database'][0]['dsn'] = 'sqlite:' . ODEN_SITE_PATH . '/data/.ht.sqlite';
@@ -71,20 +67,47 @@ $oden->config['controllers'] = array(
   'blog'	    => array('enabled' => true,'class' => 'CCBlog'),	
   'page'	    => array('enabled' => true,'class' => 'CCPage'),
   'theme'     => array('enabled' => true,'class' => 'CCTheme'),
+  'module'    => array('enabled' => true,'class' => 'CCModules'),
+  'my'        => array('enabled' => true,'class' => 'CCMycontroller'),
+  );
+
+// Define a coustom url to a controller/method/argument
+$oden->config['routing'] = array(
+  'home' => array('enabled' => true, 'url' => 'index/index'),
+  );
+ 
+// Oden menu 
+$oden->config['menus'] = array(
+  'navbar' => array(
+    'home'      => array('label'=>'Home', 'url'=>'home'),
+    'modules'   => array('label'=>'Modules', 'url'=>'module'),
+    'content'   => array('label'=>'Content', 'url'=>'content'),
+    'guestbook' => array('label'=>'Guestbook', 'url'=>'guestbook'),
+    'blog'      => array('label'=>'Blog', 'url'=>'blog'),
+  ),
+  'my-navbar' => array(
+    'home'      => array('label'=>'About Me', 'url'=>'my'),
+    'blog'      => array('label'=>'My Blog', 'url'=>'my/blog'),
+    'guestbook' => array('label'=>'Guestbook', 'url'=>'my/guestbook'),
+  ),
 );
+
 
 // Settings for the theme
 $oden->config['theme'] = array(
-  'name'            => 'grid',            // The name of the theme in the theme directory
-  'stylesheet'      => 'style.php',       // Main stylesheet to include in template files
-  'template_file'   => 'index.tpl.php',   // Default template file, else use default.tpl.php
+  'path'            => 'site/themes/mytheme', 
+  //'path'          => 'theme/grid',
+  'parent'          => 'theme/grid',
+  'stylesheet'      => 'style.css',           // Main stylesheet to include in template files
+  'template_file'   => 'index.tpl.php',       // Default template file, else use default.tpl.php
   // A list of valid theme regions
   'regions' => array(
-    'flash','featured-first','featured-middle','featured-last',
+    'navbar', 'flash','featured-first','featured-middle','featured-last',
     'primary','sidebar','triptych-first','triptych-middle','triptych-last',
     'footer-column-one','footer-column-two','footer-column-three','footer-column-four',
     'footer',
   ),
+   'menu_to_region' => array('my-navbar'=>'navbar'),
   // Add static entries for use in the template file 
   'data' => array(
     'header' => 'Hi I\'m Oden',
@@ -92,8 +115,9 @@ $oden->config['theme'] = array(
     'favicon' => '/img/logo.png',
     'logo' => '/img/logo.png',
     'logo_width' => 100,
-    'logo_heigth' => 100,
+    'logo_heigth' => 80,
     'footer' => "<p>Oden &copy; By Isa Jansson</p><p><a href='../index.php'>Min me-sida</a></p>",
     ),
 );
+
 

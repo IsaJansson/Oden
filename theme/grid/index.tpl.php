@@ -3,9 +3,8 @@
 <head>
   <meta charset='utf-8'/>
   <title><?=$title?></title>
-        <link rel='shortcut icon' href='<?=theme_url($favicon)?>'/>
-  <link rel='stylesheet' href='<?=$stylesheet?>'/>
-  <?php if(isset($inline_style)): ?><style><?=$inline_style?></style><?php endif; ?>
+  <link rel='shortcut icon' href='<?=theme_url($favicon)?>'/>
+  <link rel='stylesheet' href='<?=theme_url($stylesheet)?>'/>
 </head>
 <body>
 
@@ -14,10 +13,13 @@
     <div id='header'>
       <div id='login-menu'><?=login_menu()?></div>
       <div id='banner'>
-        <a href='<?=base_url()?>'><img id='site-logo' src='<?=theme_url($logo)?>' alt='logo' width='<?=$logo_width?>' height='<?=$logo_height?>' /></a>
+        <a href='<?=base_url()?>'><img id='site-logo' src='<?=theme_url($logo)?>' alt='logo' width='<?=$logo_width?>' /></a>
         <span id='site-title'><a href='<?=base_url()?>'><?=$header?></a></span>
         <span id='site-slogan'><?=$slogan?></span>
       </div>
+      <?php if(region_has_content('navbar')): ?>
+      <div id='navbar'><?=render_views('navbar')?></div>
+      <?php endif; ?>
     </div>
   </div>
 </div>

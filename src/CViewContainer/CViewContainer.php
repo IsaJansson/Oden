@@ -37,16 +37,6 @@ class CViewContainer {
       return $this;
   }
 
-   // Render all views according to their type.
-  public function Render($region='default') {
-    if(!isset($this->views[$region])) return;
-    foreach($this->views[$region] as $view) {
-      switch($view['type']) {
-        case 'include': extract($view['variables']); include($view['file']); break;
-        case 'string': extract($view['variables']); echo $view['string']; break;
-      }
-    }
-  }
 
   /**
   * Add text and optional varables 
@@ -89,6 +79,17 @@ class CViewContainer {
     return $this;
   }
 
+
+   // Render all views according to their type.
+  public function Render($region='default') {
+    if(!isset($this->views[$region])) return;
+    foreach($this->views[$region] as $view) {
+      switch($view['type']) {
+        case 'include': if(isset($view['variables'])) extract($view['variables']); include($view['file']); break;
+        case 'string':  if(isset($view['variables'])) extract($view['variables']); echo $view['string']; break;
+      }
+    }
+  }
 
 
 

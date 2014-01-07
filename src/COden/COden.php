@@ -119,21 +119,43 @@ class COden implements ISingleton {
 	      return;
 	    }
 
-		// Get the paths and settings for the theme.
-		$themeName = $this->config['theme']['name'];
-		$themePath = ODEN_INSTALL_PATH . "/theme/{$themeName}";
-		$themeUrl  = $this->request->base_url . "theme/{$themeName}";
+		// Get the paths and settings for the theme
+		$themePath = ODEN_INSTALL_PATH . '/' . $this->config['theme']['path'];
+		$themeUrl  = $this->request->base_url . $this->config['theme']['path'];
 
-		// Add stylesheet path to the $oden->data array
-		$this->data['stylesheet'] = "{$themeUrl}/".$this->config['theme']['stylesheet'];
+		// Is there a parent theme?
+    	$parentPath = null;
+    	$parentUrl = null;
+   		if(isset($this->config['theme']['parent'])) {
+      		$parentPath = ODEN_INSTALL_PATH . '/' . $this->config['theme']['parent'];
+      		$parentUrl  = $this->request->base_url . $this->config['theme']['parent'];
+   		}
+    
+    	// Add stylesheet name to the $oden->data array
+   		$this->data['stylesheet'] = $this->config['theme']['stylesheet'];
+
+   		// Make the theme urls available as part of $oden
+    	$this->themeUrl = $themeUrl;
+    	$this->themeParentUrl = $parentUrl;
+
+		// Map menu to region if defined
+    	if(is_array($this->config['theme']['menu_to_region'])) {
+      		foreach($this->config['theme']['menu_to_region'] as $key => $val) {
+        		$this->views->AddString($this->DrawMenu($key), null, $val);
+      		}
+    	}
 
 		// Incude the global functions.php and the ones that are parts of the theme.
 		$oden = &$this;
 		include(ODEN_INSTALL_PATH . '/theme/functions.php');
-		$functionsPath = "{$themePath}/functions.php";
-		if(is_file($functionsPath)) {
-			include $functionsPath;
-		}
+		if($parentPath) {
+      		if(is_file("{$parentPath}/functions.php")) {
+        		include "{$parentPath}/functions.php";
+      		}
+    	}
+   		if(is_file("{$themePath}/functions.php")) {
+      		include "{$themePath}/functions.php";
+    	}
 
 		// Extract $oden->data to own variables and handover to the template  file.
 		extract($this->data);
@@ -142,7 +164,83 @@ class COden implements ISingleton {
       		extract($this->config['theme']['data']);
     	}
 		$templateFile = (isset($this->config['theme']['template_file'])) ? $this->config['theme']['template_file'] : 'default.tpl.php';
-		include("{$themePath}/{$templateFile}");
+		if(is_file("{$themePath}/{$templateFile}")) {
+		      include("{$themePath}/{$templateFile}");
+		} 
+		else if(is_file("{$parentPath}/{$templateFile}")) {
+		      include("{$parentPath}/{$templateFile}");
+		} 
+		else {
+		      throw new Exception('No such template file.');
+		}
 	}
+
+    /**
+    * Create an url. Wrapper and shorter method for $this->request->CreateUrl()
+    * @param $urlOrController string the relative url or the controller
+    * @param $method string the method to use, $url is then the controller or empty for current
+    * @param $arguments string the extra arguments to send to the method
+    */
+    public function CreateUrl($urlOrController=null, $method=null, $arguments=null) {
+	  return $this->request->CreateUrl($urlOrController, $method, $arguments);
+	}
+
+	// Redirect to another url and store the session, all redirects should use this method.
+	public function RedirectTo($urlOrController=null, $method=null, $arguments=null) {
+	    if(isset($this->config['debug']['db-num-queries']) && $this->config['debug']['db-num-queries'] && isset($this->db)) {
+	      $this->session->SetFlash('database_numQueries', $this->db->GetNumQueries());
+	    }    
+	    if(isset($this->config['debug']['db-queries']) && $this->config['debug']['db-queries'] && isset($this->db)) {
+	      $this->session->SetFlash('database_queries', $this->db->GetQueries());
+	    }    
+	    if(isset($this->config['debug']['timer']) && $this->config['debug']['timer']) {
+	            $this->session->SetFlash('timer', $this->timer);
+	    }    
+	    $this->session->StoreInSession();
+	    header('Location: ' . $this->request->CreateUrl($urlOrController, $method, $arguments));
+	    exit;
+    }
+
+    public function RedirectToController($method=null, $arguments=null) {
+   		$this->RedirectTo($this->request->controller, $method, $arguments);
+    }
+
+    public function RedirectToControllerMethod($controller=null, $method=null, $arguments=null) {
+        $controller = is_null($controller) ? $this->request->controller : null;
+        $method = is_null($method) ? $this->request->method : null;          
+    	$this->RedirectTo($this->request->CreateUrl($controller, $method, $arguments));
+    }
+
+    // Save a message in the session. Uses $this->session->AddMessage()
+    public function AddMessage($type, $message, $alternative=null) {
+	    if($type === false) {
+	      $type = 'error';
+	      $message = $alternative;
+	    } else if($type === true) {
+	      $type = 'success';
+	    }
+	    $this->session->AddMessage($type, $message);
+    }
+
+    /**
+   * Draw HTML for a menu defined in $oden->config['menus'].
+   * @param $menu, string then key to the menu in the config-array.
+   * @return string with the HTML representing the menu.
+   */
+    public function DrawMenu($menu) {
+	    $items = null;
+	    if(isset($this->config['menus'][$menu])) {
+	      foreach($this->config['menus'][$menu] as $val) {
+	        $selected = null;
+	        if($val['url'] == $this->request->request || $val['url'] == $this->request->routed_from) {
+	          $selected = " class='selected'";
+	        }
+	        $items .= "<li><a {$selected} href='" . $this->request->CreateUrl($val['url']) . "'>{$val['label']}</a></li>\n";
+	      }
+	    } else {
+	      throw new Exception('No such menu.');
+	    }     
+	    return "<ul class='menu {$menu}'>\n{$items}</ul>\n";
+    }
 
 }

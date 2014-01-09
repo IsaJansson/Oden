@@ -68,7 +68,7 @@ $oden->config['controllers'] = array(
   'page'	    => array('enabled' => true,'class' => 'CCPage'),
   'theme'     => array('enabled' => true,'class' => 'CCTheme'),
   'module'    => array('enabled' => true,'class' => 'CCModules'),
-  'my'        => array('enabled' => true,'class' => 'CCMycontroller'),
+  'my'        => array('enabled' => true,'class' => 'CCMyController'),
   );
 
 // Define a coustom url to a controller/method/argument

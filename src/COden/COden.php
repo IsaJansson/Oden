@@ -45,7 +45,7 @@ class COden implements ISingleton {
         $this->views = new CViewContainer();
 
          // Create a object for the user
-    	$this->user = new CMUser($this);
+	    	$this->user = new CMUser($this);
 	}
 
 	/*

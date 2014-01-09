@@ -15,6 +15,11 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
 		$profile = $this->session->GetAuthenticatedUser();
 	    $this->profile = is_null($profile) ? array() : $profile;
 	    $this['isAuthenticated'] = is_null($profile) ? false : true;
+	    if(!$this['isAuthenticated']) {
+	      $this['id'] = 1;
+	      $this['acronym'] = 'anonomous';      
+	      $this['hasRoleAnonomous'] = true;
+    	}
 	}
 
     // Implementing ArrayAccess for $this->profile
@@ -22,6 +27,8 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
     public function offsetExists($offset) { return isset($this->profile[$offset]); }
     public function offsetUnset($offset) { unset($this->profile[$offset]); }
     public function offsetGet($offset) { return isset($this->profile[$offset]) ? $this->profile[$offset] : null; }
+
+	public function Manage($action=null, $args=null) { require_once(__DIR__.'/CMUserModule.php'); $m = new CMUserModule(); return $m->Manage($action, $args); }
 
 	// Implementing IHasSQL and encapsulating all SQL used by this class 
 	public static function SQL($key=null) {
@@ -46,47 +53,6 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
 	    }
 	    return $queries[$key];
 	}
-
-	  /**
-	   * Implementing interface IModule. Manage install/update/uninstall and equal actions.
-	   * @param string $action what to do.
-	   */
-	  public function Manage($action=null) {
-	    switch($action) {
-	      case 'install': 
-	        try {
-	          $this->db->ExecuteQuery(self::SQL('drop table user2group'));
-	          $this->db->ExecuteQuery(self::SQL('drop table group'));
-	          $this->db->ExecuteQuery(self::SQL('drop table user'));
-	          $this->db->ExecuteQuery(self::SQL('create table user'));
-	          $this->db->ExecuteQuery(self::SQL('create table group'));
-	          $this->db->ExecuteQuery(self::SQL('create table user2group'));
-	          $this->db->ExecuteQuery(self::SQL('insert into user'), array('anonomous', 'Anonomous, not authenticated', null, 'plain', null, null));
-	          $password = $this->CreatePassword('root');
-	          $this->db->ExecuteQuery(self::SQL('insert into user'), array('root', 'The Administrator', 'root@dbwebb.se', $password['algorithm'], $password['salt'], $password['password']));
-	          $idRootUser = $this->db->LastInsertId();
-	          $password = $this->CreatePassword('doe');
-	          $this->db->ExecuteQuery(self::SQL('insert into user'), array('doe', 'John/Jane Doe', 'doe@dbwebb.se', $password['algorithm'], $password['salt'], $password['password']));
-	          $idDoeUser = $this->db->LastInsertId();
-	          $this->db->ExecuteQuery(self::SQL('insert into group'), array('admin', 'The Administrator Group'));
-	          $idAdminGroup = $this->db->LastInsertId();
-	          $this->db->ExecuteQuery(self::SQL('insert into group'), array('user', 'The User Group'));
-	          $idUserGroup = $this->db->LastInsertId();
-	          $this->db->ExecuteQuery(self::SQL('insert into user2group'), array($idRootUser, $idAdminGroup));
-	          $this->db->ExecuteQuery(self::SQL('insert into user2group'), array($idRootUser, $idUserGroup));
-	          $this->db->ExecuteQuery(self::SQL('insert into user2group'), array($idDoeUser, $idUserGroup));
-	          return array('success', 'Successfully created the database tables and created a default admin user as root:root and an ordinary user as doe:doe.');
-	        } catch(Exception$e) {
-	          die("$e<br/>Failed to open database: " . $this->config['database'][0]['dsn']);
-	        }   
-	      break;
-	      
-	      default:
-	        throw new Exception('Unsupported action for this module.');
-	      break;
-	    }
-	  }
-
 
 	/**
 	* Login by autenticating username and password. store userinfo in session if autenticated.

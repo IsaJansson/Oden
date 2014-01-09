@@ -28,7 +28,7 @@ class CRequest {
 
     // Create a url in the way it should be created.
     public function CreateUrl($url=null, $method=null, $arguments=null) {
-    // If fully qualified just leave it.
+        // If fully qualified just leave it.
         if(!empty($url) && (strpos($url, '://') || $url[0] == '/')) {
             return $url;
         }

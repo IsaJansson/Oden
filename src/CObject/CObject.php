@@ -34,37 +34,37 @@ class CObject {
 	    $this->oden->RedirectTo($urlOrController, $method, $arguments);
     }
 
-		/**
-		 * Redirect to a method within the current controller. Defaults to index-method. Uses RedirectTo().
-         * @param string method name the method, default is index method.
-         */
-        protected function RedirectToController($method=null, $arguments=null) {
-    		$this->oden->RedirectToController($method, $arguments);
-  		}
+	/**
+	 * Redirect to a method within the current controller. Defaults to index-method. Uses RedirectTo().
+     * @param string method name the method, default is index method.
+     */
+    protected function RedirectToController($method=null, $arguments=null) {
+    	$this->oden->RedirectToController($method, $arguments);
+  	}
 
-        /**
-         * Redirect to a controller and method. Uses RedirectTo().
-         * @param string controller name the controller or null for current controller.
-         * @param string method name the method, default is current method.
-         */
-        protected function RedirectToControllerMethod($controller=null, $method=null, $arguments=null) {
-            $this->oden->RedirectToControllerMethod($controller, $method, $arguments);;
-  		}
+    /**
+     * Redirect to a controller and method. Uses RedirectTo().
+     * @param string controller name the controller or null for current controller.
+     * @param string method name the method, default is current method.
+     */
+    protected function RedirectToControllerMethod($controller=null, $method=null, $arguments=null) {
+         $this->oden->RedirectToControllerMethod($controller, $method, $arguments);;
+  	}
 
-  		protected function AddMessage($type, $message, $alternative=null) {
-		     return $this->oden->AddMessage($type, $message, $alternative);
-    	}
+  	protected function AddMessage($type, $message, $alternative=null) {
+	     return $this->oden->AddMessage($type, $message, $alternative);
+    }
 
 
-        /**
-         * Create an url. Uses $this->request->CreateUrl()
-         *
-         * @param $urlOrController string the relative url or the controller
-         * @param $method string the method to use, $url is then the controller or empty for current
-         * @param $arguments string the extra arguments to send to the method
-         */
-        protected function CreateUrl($urlOrController=null, $method=null, $arguments=null) {
-    		 return $this->oden->CreateUrl($urlOrController, $method, $arguments);
-  		}
+    /**
+     * Create an url. Uses $this->request->CreateUrl()
+     *
+     * @param $urlOrController string the relative url or the controller
+     * @param $method string the method to use, $url is then the controller or empty for current
+     * @param $arguments string the extra arguments to send to the method
+     */
+    protected function CreateUrl($urlOrController=null, $method=null, $arguments=null) {
+    	 return $this->oden->CreateUrl($urlOrController, $method, $arguments);
+  	}
 
 }

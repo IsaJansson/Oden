@@ -2,7 +2,7 @@
 <h4>All Modules</h4>
 	<ul>
 		<?php foreach($modules as $module): ?>
-			<li><?=$module['name']?></li>
+			<li><a href='<?=create_url("module/view/{$module['name']}")?>'><?=$module['name']?></a></li>
 		<?php endforeach; ?>
 	</ul>
 </div>
@@ -12,7 +12,7 @@
 	<ul>
 		<?php foreach($modules as $module): ?>
 			<?php if($module['isOdenCore']): ?>
-				<li><?=$module['name']?></li>
+				<li><a href='<?=create_url("module/view/{$module['name']}")?>'><?=$module['name']?></a></li>
 			<?php endif; ?>
 		<?php endforeach; ?>
 	</ul>
@@ -23,7 +23,7 @@
 	<ul>
 		<?php foreach($modules as $module): ?>
 			<?php if($module['isOdenCMF']): ?>
-				<li><?=$module['name']?></li>
+				<li><a href='<?=create_url("module/view/{$module['name']}")?>'><?=$module['name']?></a></li>
 			<?php endif; ?>
 		<?php endforeach; ?>
 	</ul>
@@ -35,7 +35,7 @@
 	<ul>
 		<?php foreach($modules as $module): ?>
 			  <?php if($module['isModel']): ?>
-			  	<li><?=$module['name']?></li>
+			  	<li><a href='<?=create_url("module/view/{$module['name']}")?>'><?=$module['name']?></a></li>
 			  <?php endif; ?>
 		<?php endforeach; ?>
 	</ul>
@@ -47,10 +47,22 @@
 	<ul>
 		<?php foreach($modules as $module): ?>
 		  <?php if($module['isController']): ?>
-		  	<li><?=$module['name']?></li>
+		  	<li><a href='<?=create_url("module/view/{$module['name']}")?>'><?=$module['name']?></a></li>
 		  <?php endif; ?>
 		<?php endforeach; ?>
 	</ul>
+</div>
+
+<div class='box'>
+<h4>Manageable module</h4>
+<p>Implements interface <code>IModule</code>.</p>
+<ul>
+<?php foreach($modules as $module): ?>
+  <?php if($module['isManageable']): ?>
+  <li><a href='<?=create_url("module/view/{$module['name']}")?>'><?=$module['name']?></a></li>
+  <?php endif; ?>
+<?php endforeach; ?>
+</ul>
 </div>
 
 
@@ -60,7 +72,7 @@
 	<ul>
 		<?php foreach($modules as $module): ?>
 		  <?php if($module['hasSQL']): ?>
-		  	<li><?=$module['name']?></li>
+		  	<li><a href='<?=create_url("module/view/{$module['name']}")?>'><?=$module['name']?></a></li>
 		  <?php endif; ?>
 		<?php endforeach; ?>
 	</ul>
@@ -72,7 +84,7 @@
 	<ul>
 		<?php foreach($modules as $module): ?>
 		  <?php if(!($module['isController'] || $module['isOdenCore'] || $module['isOdenCMF'])): ?>
-		  	<li><?=$module['name']?></li>
+		  	<li><a href='<?=create_url("module/view/{$module['name']}")?>'><?=$module['name']?></a></li>
 		  <?php endif; ?>
 		<?php endforeach; ?>
 	</ul>

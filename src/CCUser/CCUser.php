@@ -35,27 +35,41 @@ class CCUser extends CObject implements IController {
                   'profile_form'=>$form->GetHTML(),
                 ));
     }
-  
 
-    // Change the password.
-    public function DoChangePassword($form) {
-	    if($form['password']['value'] != $form['password1']['value'] || empty($form['password']['value']) || empty($form['password1']['value'])) {
-	      $this->AddMessage('error', 'Password does not match or is empty.');
-	    } else {
-	      $ret = $this->user->ChangePassword($form['password']['value']);
-	      $this->AddMessage($ret, 'Saved new password.', 'Failed to update password.');
-	    }
-	    $this->RedirectToController('profile');
-    }
   
 
     // Save updates to profile information.
     public function DoProfileSave($form) {
 	    $this->user['name'] = $form['name']['value'];
 	    $this->user['email'] = $form['email']['value'];
-	    $ret = $this->user->Save();
-	    $this->AddMessage($ret, 'Saved profile.', 'Failed saving profile.');
+	    $res = $this->user->Save();
+	    $this->AddMessage($res, 'Saved profile.', 'Failed saving profile.');
 	    $this->RedirectToController('profile');
+    }
+
+    // Delete user profile
+    public function Delete() {
+        $form = new CFormUserProfile($this, $this->user);
+        $this->views->SetTitle('User Profile')
+                ->AddInclude(__DIR__ . '/profile.tpl.php', array(
+                  'is_authenticated'=>$this->user['isAuthenticated'], 
+                  'user'=>$this->user,
+                  'profile_form'=>$form->GetHTML(),
+                ));
+
+    }
+
+    public function DoProfileDelete() {
+        $user = new CMUser();
+        $deleted = $user->Delete();
+        if($deleted = true) {
+        	$this->user->Logout();
+			$this->RedirectToController('login');
+        	$this->AddMessage('success', 'You successfully deleted ' . $this->user['acronym']);		
+        }
+        else {
+        	$this->AddMessage('notice', 'You were not able to delete this user.');
+        }
     }
   
 
@@ -127,12 +141,5 @@ class CCUser extends CObject implements IController {
 	    }
     }
   
-
-    // Init the user database.
-	public function Init() {
-	    $this->user->Init();
-	    $this->RedirectToController();
-	}
-
 
 }

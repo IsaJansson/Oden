@@ -34,6 +34,14 @@ class CMDatabase {
 	    return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 
+	public function ExecuteSelectQuery($query, $params=array()){
+	    $this->stmt = $this->db->prepare($query);
+	    self::$queries[] = $query; 
+	    self::$numQueries++;
+	    $this->stmt->execute($params);
+	    return $this->stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 	// Execute a SQL-query and ignore the result.
 	public function ExecuteQuery($query, $params = array()) {
 		$this->stmt = $this->db->prepare($query);

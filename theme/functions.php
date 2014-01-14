@@ -13,19 +13,21 @@ function get_debug() {
 
   // Get the debug output 
   $html = null;
-  if(isset($oden->config['debug']['db-num-queries']) && $oden->config['debug']['db-num-queries'] && isset($oden->db)) {
-    $flash = $oden->session->GetFlash('database_numQueries');
-    $flash = $flash ? "$flash + " : null;
-    $html .= "<p>Database made $flash" . $oden->db->GetNumQueries() . " queries.</p>";
-  }    
-  if(isset($oden->config['debug']['db-queries']) && $oden->config['debug']['db-queries'] && isset($oden->db)) {
-    $flash = $oden->session->GetFlash('database_queries');
-    $queries = $oden->db->GetQueries();
-    if($flash) {
-      $queries = array_merge($flash, $queries);
-    }
-    $html .= "<p>Database made the following queries.</p><pre>" . implode('<br/><br/>', $queries) . "</pre>";
-  }    
+  /**
+  * if(isset($oden->config['debug']['db-num-queries']) && $oden->config['debug']['db-num-queries'] && isset($oden->db)) {
+  *  $flash = $oden->session->GetFlash('database_numQueries');
+  *  $flash = $flash ? "$flash + " : null;
+  *  $html .= "<p>Database made $flash" . $oden->db->GetNumQueries() . " queries.</p>";
+  * }    
+  * if(isset($oden->config['debug']['db-queries']) && $oden->config['debug']['db-queries'] && isset($oden->db)) {
+  *  $flash = $oden->session->GetFlash('database_queries');
+  *  $queries = $oden->db->GetQueries();
+  *  if($flash) {
+  *    $queries = array_merge($flash, $queries);
+  *  }
+  *  $html .= "<p>Database made the following queries.</p><pre>" . implode('<br/><br/>', $queries) . "</pre>";
+  * }  
+  */ 
   if(isset($oden->config['debug']['timer']) && $oden->config['debug']['timer']) {
     $html .= "<p>Page was loaded in " . round(microtime(true) - $oden->timer['first'], 5)*1000 . " msecs.</p>";
   }    
@@ -102,9 +104,9 @@ function render_views($region='default') {
 function login_menu() {
   $oden = COden::Instance();
   if($oden->user['isAuthenticated']) {
-    $items = "<a href='" . create_url('user/profile') . "'><img class='gravatar' src='" . get_gravatar(20) . "' alt=''>" . $oden->user['acronym'] . "</a> ";
-    if($oden->user['hasRoleAdministrator']) {
-      $items .= "<a href='" . create_url('acp') . "'>acp</a> ";
+    $items = "<a href='" . create_url('user/profile') . "'><img class='gravatar' src='" . get_gravatar(20) . "' alt=''>" . $oden->user['acronym']  . " </a> |";
+    if($oden->user['hasRoleAdmin']) {
+      $items .= "<a href='" . create_url('acp') . "'>admin control panel </a>|";
     }
     $items .= "<a href='" . create_url('user/logout') . "'>logout</a> ";
   } else {

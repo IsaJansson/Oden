@@ -1,3 +1,4 @@
+<?php if($user['hasRoleUser']): ?>
 <?php if($content['created']): ?>
   <h1>Edit Content</h1>
   <p>You can edit and save this content.</p>
@@ -26,3 +27,8 @@
 <a href='<?=create_url('page', 'view', $content['id'])?>'>View</a>
 <a href='<?=create_url('content')?>'>View all</a>
 </p>
+
+<?php else: ?> 
+	<p>You cannot reach this part if you are not yet logged in. Login or create a new user <a href='<?=create_url('user/login')?>'>here</a> and try again. </p> 
+<?php endif;?>
+

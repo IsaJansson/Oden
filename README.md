@@ -1,5 +1,5 @@
-Oden - My PHP based MVC inspired framework 
-==========================================
+Oden - My PHP based MVC inspired CMF 
+====================================
 
 This framework is created by Isa Jansson isa.jansson@hotmail.com as a part of the course "Databas driven web applications with PHP and MVC" at Blekinge Institute of Technology. This framework is based on Lydia wich is created by Mickael Roos - lecturer at BTH. 
 
@@ -7,11 +7,11 @@ Specifications
 --------------
 * PHP
 * SQLite
-* Writable directorys site/data and theme/grid (chmod 777)
+* Writable directorys site/data (chmod 777)
 
 Installation
 ------------
-To install this framework you can either clone from GitHub at http://github.com/IsaJansson/Oden or download the zip-file. When the download is complete point your browser to the folder you put it in and follow the instructions. 
+To install this framework you can either clone from GitHub at http://github.com/IsaJansson/Oden or download the zip-file. When the download is complete make 'site/data' and 'theme/grid' writable and then point your browser to the folder you put Oden in and follow the instructions. 
 
 Usage
 -----
@@ -26,7 +26,7 @@ To create a new page you simply go to 'content/create' and set the 'Type' as 'pa
 To create a blogpost for your new blog you follow the steps of creating a new page only you set type as 'post' instead of 'page'.  
 
 ### Changes in the theme
-To change logo, title or slogan on your site you go to 'site/config.php' and at the bottom on that file you will find these settings. At the same place you can alter the footer as well. Right above these settings you will find the settings for the menu. There is a base-style in Oden which is based on semantic grid layout. This style is easy to overide in the site-specific stylesheet you will find in 'site/themes/mytheme/style.css'. The colorscheme used as default in Oden is set in this site-specific stylesheet. 
+To change logo, title or slogan on your site you go to 'site/config.php' and at the bottom on that file you will find these settings. At the same place you can alter the footer as well. Right above these settings you will find the settings for the menu. There is a base-style in Oden which is based on semantic grid layout. This style is easy to overide in the site-specific stylesheet you will find in 'site/themes/mytheme/style.css'. The colorscheme used as default in Oden is set in this site-specific stylesheet. If you want to change the base theme of Oden you need to make 'theme/grid' writable as well due to its use of lessphp. 
 
 Use of external libraries
 -------------------------

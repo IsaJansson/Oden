@@ -77,7 +77,7 @@ $oden->config['routing'] = array(
   );
  
 // Oden menu 
-$oden->config['menus'] = array(
+  $oden->config['menus'] = array(
   'navbar' => array(
     'home'      => array('label'=>'Home', 'url'=>'home'),
     'modules'   => array('label'=>'Modules', 'url'=>'module'),
@@ -86,9 +86,10 @@ $oden->config['menus'] = array(
     'blog'      => array('label'=>'Blog', 'url'=>'blog'),
   ),
   'my-navbar' => array(
-    'home'      => array('label'=>'About Me', 'url'=>'my'),
-    'blog'      => array('label'=>'My Blog', 'url'=>'my/blog'),
-    'guestbook' => array('label'=>'Guestbook', 'url'=>'my/guestbook'),
+       'home'      => array('label'=>'About Me', 'url'=>'my'),
+        'blog'      => array('label'=>'My Blog', 'url'=>'my/blog'),
+        'guestbook' => array('label'=>'Guestbook', 'url'=>'my/guestbook'),
+        'modules'   => array('label'=>'Modules', 'url'=>'module'),
   ),
 );
 
@@ -116,7 +117,7 @@ $oden->config['theme'] = array(
     'logo' => '/img/logo.png',
     'logo_width' => 100,
     'logo_heigth' => 80,
-    'footer' => "<p>Oden &copy; By Isa Jansson</p><p><a href='../index.php'>Min me-sida</a></p>",
+    'footer' => "<p>Oden &copy; 2014 By Isa Jansson</p>",
     ),
 );
 

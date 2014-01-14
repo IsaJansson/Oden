@@ -14,7 +14,8 @@ class CFormUserProfile extends CForm {
 			->AddElement(new CFormElementSubmit('change_password', array('callback'=>array($object, 'DoChangePassword'))))
 			->AddElement(new CFormElementText('name', array('value'=>$user['name'], 'required'=>true)))
 			->AddElement(new CFormElementText('email', array('value'=>$user['email'], 'required'=>true)))
-			->AddElement(new CFormElementSubmit('save', array('callback'=>array($object, 'DoProfileSave'))));
+			->AddElement(new CFormElementSubmit('save', array('callback'=>array($object, 'DoProfileSave'))))
+			->AddElement(new CFormElementSubmit('delete', array('callback'=>array($object, 'DoProfileDelete'))));
 	}
 	
 }

@@ -12,6 +12,8 @@ class CCMyController extends CObject implements IController {
 		$content = new CMContent(5);
 		$this->views->SetTitle('About me' . htmlEnt($content['title']))
 					->AddInclude(__DIR__ . '/page.tpl.php', array(
+						'is_authenticated'=>$this->user['isAuthenticated'], 
+                  		'user'=>$this->user,
 						'content' => $content,
 						));
 	}
@@ -21,6 +23,8 @@ class CCMyController extends CObject implements IController {
 	    $content = new CMContent();
 	    $this->views->SetTitle('My blog')
 	                ->AddInclude(__DIR__ . '/blog.tpl.php', array(
+	                	'is_authenticated'=>$this->user['isAuthenticated'], 
+                  		'user'=>$this->user,
 	                  'contents' => $content->ListAll(array('type'=>'post', 'order-by'=>'title', 'order-order'=>'DESC')),
 	                ));
    }
@@ -40,6 +44,8 @@ class CCMyController extends CObject implements IController {
 	    
 	    $this->views->SetTitle('My Guestbook')
 	         ->AddInclude(__DIR__ . '/guestbook.tpl.php', array(
+	         	'is_authenticated'=>$this->user['isAuthenticated'], 
+                'user'=>$this->user,
 	            'entries'=>$guestbook->ReadAll(), 
 	            'form'=>$form,
 	         ));

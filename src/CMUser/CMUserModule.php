@@ -15,7 +15,7 @@ class CMUserModule extends CMUser {
 
 			// Need to have arguments to create root user
 			if(!is_array($args)) {
-				return array('error', t('CMUserModule::Manage() says - Missing arguments to create the root user'));
+				return array('error', 'CMUserModule::Manage() says - Missing arguments to create the root user');
 			}
 			$rootEmail = $args['rootEmail'];
 			$rootUserName = $args['rootUserName'];
@@ -45,18 +45,8 @@ class CMUserModule extends CMUser {
         	return array('success', 'Database tables for users and groups are ready, as is the root user.');
         break;
 
-        case 'export-db':
-        	$manager = new CMModules();
-        	$sql = "-- #### Start Module " . get_parent_class() . "\n";
-        	$sql .= $manager->DumpTableToSQL(self::SQL('table name user'), self::SQL('export table user'), self::SQL('create table user'), self::SQL('drop table user'));
-	        $sql .= $manager->DumpTableToSQL(self::SQL('table name group'), self::SQL('export table group'), self::SQL('create table group'), self::SQL('drop table group'));
-	        $sql .= $manager->DumpTableToSQL(self::SQL('table name user2group'), self::SQL('export table user2group'), self::SQL('create table user2group'), self::SQL('drop table user2group'));
-	        $sql .= "-- #### End Module " . get_parent_class() . "\n\n";
-	        return array('success', 'Successfully exported data as SQL INSERT commands.', $sql);
-	    break;
-
 	    case 'supported-actions':
-	    	$actions = array('install-root', 'export-db');
+	    	$actions = array('install-root');
 	    	return array('success', 'Supporting the following actions: !actions.', array('!actions'=>implode(', ', $actions)), 'actions'=>$actions);
 	    break;
 	    

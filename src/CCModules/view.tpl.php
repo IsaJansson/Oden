@@ -1,3 +1,4 @@
+<?php if($is_authenticated && $user['hasRoleAdmin']): ?>
 <?php if(!is_array($module)): ?>
 
 <p>404. So such module.</p>
@@ -30,7 +31,7 @@
 </table>
 
 
-<?if(!empty($module['publicMethods'])): ?>
+<?php if(!empty($module['publicMethods'])): ?>
 <h2>Public methods</h2>
 <?php foreach($module['methods'] as $method): ?>
 <?php if($method['isPublic']): ?>
@@ -42,7 +43,7 @@
 <?php endif; ?>
 
 
-<?if(!empty($module['protectedMethods'])): ?>
+<?php if(!empty($module['protectedMethods'])): ?>
 <h2>Protected methods</h2>
 <?php foreach($module['methods'] as $method): ?>
 <?php if($method['isProtected']): ?>
@@ -54,7 +55,7 @@
 <?php endif; ?>
 
 
-<?if(!empty($module['privateMethods'])): ?>
+<?php if(!empty($module['privateMethods'])): ?>
 <h2>Private methods</h2>
 <?php foreach($module['methods'] as $method): ?>
 <?php if($method['isPrivate']): ?>
@@ -66,7 +67,7 @@
 <?php endif; ?>
 
 
-<?if(!empty($module['staticMethods'])): ?>
+<?php if(!empty($module['staticMethods'])): ?>
 <h2>Static methods</h2>
 <?php foreach($module['methods'] as $method): ?>
 <?php if($method['isStatic']): ?>
@@ -78,5 +79,9 @@
 <?php endif; ?>
 
 <?php endif; ?>
+
+<?php else: ?>
+	<p>Access denied! This part can only be accessed by the Administrator.</p>
+<?php endif;?>
 
 

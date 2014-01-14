@@ -3,9 +3,12 @@
 html{background-color:#fff;}
 body{background-color:#fff;}
 #outer-wrap-header{background-color:#000;border-bottom:2px solid #FFCE80}
-#outer-wrap-footer{background-color:#000}
+#outer-wrap-footer{background-color:#000;}
 
 a{color:#f37b2f}
 
 #navbar {font-weight: bold;}
 
+#navbar ul.menu li a:hover{background-color:#000;border:2px solid #f37b2f;}
+
+#navbar ul.menu li a.selected{background-color:#000;border:2px solid #f37b2f;}

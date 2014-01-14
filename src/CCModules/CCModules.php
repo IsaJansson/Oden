@@ -15,8 +15,14 @@ class CCModules extends CObject implements IController {
 		$controllers = $modules->AvaliableControllers();
 		$allModules = $modules->ReadAndAnalyse();
 		$this->views->SetTitle('Manage Modules')
-					->AddInclude(__DIR__ . '/index.tpl.php', array('controllers'=>$controllers), 'primary')
-					->AddInclude(__DIR__ . '/sidebar.tpl.php', array('modules'=>$allModules), 'sidebar');
+					->AddInclude(__DIR__ . '/index.tpl.php', array(
+						'is_authenticated'=>$this->user['isAuthenticated'], 
+                		'user'=>$this->user,
+                		'controllers'=>$controllers), 'primary')
+					->AddInclude(__DIR__ . '/sidebar.tpl.php', array(
+						'is_authenticated'=>$this->user['isAuthenticated'], 
+                		'user'=>$this->user,
+						'modules'=>$allModules), 'sidebar');
 	} 
 
 	// Show a index-page wich displays what the user can do in this controller
@@ -37,8 +43,14 @@ class CCModules extends CObject implements IController {
 	    $allModules = $modules->ReadAndAnalyse();
 	    $aModule = $modules->ReadAndAnalyseModule($module);
 	    $this->views->SetTitle('Manage Modules')
-	                ->AddInclude(__DIR__ . '/view.tpl.php', array('module'=>$aModule), 'primary')
-	                ->AddInclude(__DIR__ . '/sidebar.tpl.php', array('modules'=>$allModules), 'sidebar');
+	                ->AddInclude(__DIR__ . '/view.tpl.php', array(
+	                	'is_authenticated'=>$this->user['isAuthenticated'], 
+                		'user'=>$this->user,
+	                	'module'=>$aModule), 'primary')
+	                ->AddInclude(__DIR__ . '/sidebar.tpl.php', array(
+	                	'is_authenticated'=>$this->user['isAuthenticated'], 
+                		'user'=>$this->user,
+	                	'modules'=>$allModules), 'sidebar');
 	}
 
 

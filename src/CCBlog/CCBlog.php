@@ -16,6 +16,8 @@ class CCBlog extends CObject implements IController {
 		$content = new CMContent();
 		$this->views->SetTitle('Blog')
 					->AddInclude(__DIR__ . '/index.tpl.php', array(
+						'is_authenticated'=>$this->user['isAuthenticated'], 
+                  		'user'=>$this->user,
 						'contents' => $content->ListAll(array('type'=>'post', 'order-by'=>'title', 'order-order'=>'DESC')),
 						));
 	}

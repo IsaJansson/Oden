@@ -17,8 +17,8 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
 	    $this['isAuthenticated'] = is_null($profile) ? false : true;
 	    if(!$this['isAuthenticated']) {
 	      $this['id'] = 1;
-	      $this['acronym'] = 'anonomous';      
-	      $this['hasRoleAnonomous'] = true;
+	      $this['acronym'] = 'anonymous';      
+	      $this['hasRoleAnonymous'] = true;
     	}
 	}
 
@@ -28,7 +28,6 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
     public function offsetUnset($offset) { unset($this->profile[$offset]); }
     public function offsetGet($offset) { return isset($this->profile[$offset]) ? $this->profile[$offset] : null; }
 
-	public function Manage($action=null, $args=null) { require_once(__DIR__.'/CMUserModule.php'); $m = new CMUserModule(); return $m->Manage($action, $args); }
 
 	// Implementing IHasSQL and encapsulating all SQL used by this class 
 	public static function SQL($key=null) {
@@ -43,15 +42,66 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
 	      'insert into group'       => 'INSERT INTO Groups (acronym,name) VALUES (?,?);',
 	      'insert into user2group'  => 'INSERT INTO User2Groups (idUser,idGroups) VALUES (?,?);',
 	      'check user password'     => 'SELECT * FROM User WHERE (acronym=? OR email=?);',
-	      'select from user'     	=> 'SELECT * FROM User;',
+	      'select * from user'     	=> 'SELECT * FROM User;',
+	      'select * from groups'	=> 'SELECT * FROM Groups;',
+	      'get group by id'			=> 'SELECT * FROM Groups WHERE id=?;',
+	      'get group by name'		=> 'SELECT * FROM Groups WHERE name=?;',
+	      'get user by id'			=> 'SELECT * FROM User WHERE id=?;',	
 	      'get group memberships'   => 'SELECT * FROM Groups AS g INNER JOIN User2Groups AS ug ON g.id=ug.idGroups WHERE ug.idUser=?;',
 	      'update profile'          => "UPDATE User SET name=?, email=?, updated=datetime('now') WHERE id=?;",
 	      'update password'         => "UPDATE User SET algorithm=?, salt=?, password=?, updated=datetime('now') WHERE id=?;",
+	      'update groups'			=> "UPDATE Groups SET acronym=?, name=?, updated=datetime('now') WHERE id=?;",
+	      'delete user'				=> "DELETE FROM User WHERE id=?;",
+	      'delete group'			=> "DELETE FROM Groups WHERE id=?;",
+	      'delete g from user2groups' => "DELETE FROM User2Groups WHERE idGroups=?;",
+      	  'delete u from user2groups' => "DELETE FROM user2groups WHERE idUser=?;",
 	     );
 	    if(!isset($queries[$key])) {
 	      throw new Exception("No such SQL query, key '$key' was not found.");
 	    }
 	    return $queries[$key];
+	}
+
+		/**
+	 * Manage install/update/deinstsll  and equal actions.
+	 * @param string $action the action to carry out
+	 * @param array $args extra arguments
+	 */
+	public function Manage($action=null, $args=null) {
+		switch($action){
+			case 'install':
+
+			$this->db->ExecuteQuery(self::SQL('drop table user2group'));
+	        $this->db->ExecuteQuery(self::SQL('drop table group'));
+	        $this->db->ExecuteQuery(self::SQL('drop table user'));
+	        $this->db->ExecuteQuery(self::SQL('create table user'));
+	        $this->db->ExecuteQuery(self::SQL('create table group'));
+	        $this->db->ExecuteQuery(self::SQL('create table user2group'));
+	        $this->db->ExecuteQuery(self::SQL('insert into user'), array('anonymous', 'Anonymous user', null, 'plain', null, null));
+	        $AnonymousId = 1;
+	        $password = $this->CreatePassword('root');
+	        $this->db->ExecuteQuery(self::SQL('insert into user'), array('root', 'The Administrator', 'root@dbwebb.se', $password['algorithm'], $password['salt'], $password['password']));
+	        $idRootUser = $this->db->LastInsertId();
+	        $password = $this->CreatePassword('doe');
+	        $this->db->ExecuteQuery(self::SQL('insert into user'), array('doe', 'John/Jane Doe', 'doe@dbwebb.se', $password['algorithm'], $password['salt'], $password['password']));
+	        $idDoeUser = $this->db->LastInsertId();
+	        $this->db->ExecuteQuery(self::SQL('insert into group'), array('admin', 'The Administrator Group'));
+	        $idAdminGroup = $this->db->LastInsertId();
+	        $this->db->ExecuteQuery(self::SQL('insert into group'), array('user', 'The User Group'));
+	        $idUserGroup = $this->db->LastInsertId();
+	        $this->db->ExecuteQuery(self::SQL('insert into group'), array('visitor', 'The Visitor Group'));
+	        $idVisitorGroup = $this->db->LastInsertId();
+	        $this->db->ExecuteQuery(self::SQL('insert into user2group'), array($AnonymousId, $idVisitorGroup));
+	        $this->db->ExecuteQuery(self::SQL('insert into user2group'), array($idRootUser, $idAdminGroup));
+	        $this->db->ExecuteQuery(self::SQL('insert into user2group'), array($idRootUser, $idUserGroup));
+	        $this->db->ExecuteQuery(self::SQL('insert into user2group'), array($idDoeUser, $idUserGroup));
+        	return array('success', 'Database tables for users and groups are ready, as is the root user.');
+        break;
+	    
+	    default:
+	    	throw new Exception('Unsupported action for this module.');
+	    break;	
+		}	
 	}
 
 	/**
@@ -82,6 +132,9 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
 	        if($val['id'] == 2) {
 	          $user['hasRoleUser'] = true;
 	        }
+	        if($val['id'] == 3) {
+	          $user['hasRoleGuest'] = true;
+	        }
 	      }
 	      $this->profile = $user;
 	      $this->session->SetAuthenticatedUser($this->profile);
@@ -100,6 +153,18 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
 		$this->db->ExecuteQuery(self::SQL('update profile'), array($this['name'], $this['email'], $this['id']));
 	    $this->session->SetAuthenticatedUser($this->profile);
 	    return $this->db->RowCount() === 1;
+	}
+
+	public function SaveProfile($name, $email, $id, $groups) {
+   		$this->db->ExecuteQuery(self::SQL('update profile'), array($name, $email, $id));
+   		$this->db->ExecuteQuery(self::SQL('delete u from user2groups'), array($id));
+    	foreach($groups->attributes['checked'] as $val) {
+           $group = $this->db->ExecuteSelectQuery(self::SQL('get group by name'), array($val));
+           var_dump($group);
+           $idGroups = $group['id'];
+           $this->db->ExecuteQuery(self::SQL('insert into user2group'), array($id, $idGroups));
+    	}
+    	return $this->db->RowCount() === 1;
 	}
 
 	public function ChangePassword($plain) {
@@ -152,12 +217,127 @@ class CMUser extends CObject implements IHasSQL, ArrayAccess, IModule {
     public function Create($acronym, $password, $name, $email) {
 	    $pwd = $this->CreatePassword($password);
 	    $this->db->ExecuteQuery(self::SQL('insert into user'), array($acronym, $name, $email, $pwd['algorithm'], $pwd['salt'], $pwd['password']));
+	    $idGroup = 2;
+	    $id = $this->db->LastInsertId();
+		$this->db->ExecuteQuery(self::SQL('insert into user2group'), array($id, $idGroup));
 	    if($this->db->RowCount() == 0) {
 	      $this->AddMessage('error', "Failed to create user.");
 	      return false;
 	    }
 	    return true;
    }
+
+   public function Delete() {
+   	  if($this['id']) {
+      $this->db->ExecuteQuery(self::SQL('delete user'), array($this['id']));
+      }
+      $rowcount = $this->db->RowCount();
+      if($rowcount) {
+        $this->AddMessage('success', "Successfully deleted" . htmlEnt($this['acronym']));
+      } else {
+        $this->AddMessage('error', "Failed to delete" . htmlEnt($this['acronym']));
+      }
+      return $rowcount === 1;
+   }
+
+   public function DeleteUser($id) {
+   		if(isset($id)) {
+	      $this->db->ExecuteQuery(self::SQL('delete user'), array($id));
+	    }
+	      $rowcount = $this->db->RowCount();
+	    if($rowcount) {
+	        $this->AddMessage('success', "Successfully deleted the user.");
+	    } else {
+	        $this->AddMessage('error', "Failed to delete the user.");
+	    }
+	    return $rowcount === 1;
+   }
+
+   public function IsAdmin() {
+   		return $this['hasRoleAdmin'];
+   }
+
+   public function IsUser() {
+   		return $this['hasRoleUser'];
+   }
+
+   public function IsGuest() {
+   		return $this['hasRoleGuest'];
+   }
+
+   public function IsAuthenticated() {
+   	return $this['isAuthenticated'];
+   }
+
+   public function CreateGroup($acronym, $name) {
+   		$this->db->ExecuteQuery(self::SQL('insert into group'), array($acronym, $name));
+	    if($this->db->RowCount() == 0) {
+	      $this->AddMessage('error', "Failed to create group.");
+	      return false;
+	    }
+	    return true;
+   }
+
+   public function DeleteGroup($id) {
+       $this->db->ExecuteQuery(self::SQL('delete g from user2groups'), array($id));
+	   $this->db->ExecuteQuery(self::SQL('delete group'), array($id));
+      $rowcount = $this->db->RowCount();
+      return $rowcount === 1;
+   }
+
+   	public function SaveGroup($name, $acronym, $id) {
+		$this->db->ExecuteQuery(self::SQL('update groups'), array($name, $acronym, $id));
+	    return $this->db->RowCount() === 1;
+	}
+
+
+   public function GetAllUsers() {
+	   	try {
+	      return $this->db->ExecuteSelectQueryAndFetchAll(self::SQL('select * from user'));
+	    } catch(Exception $e) {
+	      return null;
+	    }
+   }
+
+   public function GetAllGroups() {
+	   	try {
+	      return $this->db->ExecuteSelectQueryAndFetchAll(self::SQL('select * from groups'));
+	    } catch(Exception $e) {
+	      return null;
+	    }
+   }
+
+   public function GetGroup($id) {
+   		try {
+   			$res = $this->db->ExecuteSelectQueryAndFetchAll(self::SQL('get group by id'), array($id));
+   		}
+   		catch(Exception $e) {
+   			return false;
+   		}
+   		return $res[0];
+   }
+
+   public function GetUser($id) {
+   		try {
+   			$res = $this->db->ExecuteSelectQueryAndFetchAll(self::SQL('get user by id'), array($id));
+   		}
+   		catch(Exception $e) {
+   			return false;
+   		}
+   		return $res[0];
+   }
+
+   public function GetMemberships($id) {
+	    try {
+	      $res = $this->db->ExecuteSelectQueryAndFetchAll(self::SQL('get group memberships'), array($id));
+	    } catch(Exception $e) {
+	      echo $e;
+	      return null;
+	    }
+	    return $res;
+   }
+
+
 
 
 

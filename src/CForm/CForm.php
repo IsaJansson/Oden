@@ -46,6 +46,9 @@ class CFormElement implements ArrayAccess{
     $type       = isset($this['type']) ? " type='{$this['type']}'" : null;
     $onlyValue  = isset($this['value']) ? htmlent($this['value'], ENT_COMPAT, $this->characterEncoding) : null;
     $value      = isset($this['value']) ? " value='{$onlyValue}'" : null;
+    $checked 	= isset($this['checked']) && $this['checked'] ? " checked='checked'" : null;    
+    $description   = isset($this['description']) ? $this['description'] : null;
+
 
     $messages = null;
     if(isset($this['validation_messages'])) {
@@ -75,6 +78,23 @@ class CFormElement implements ArrayAccess{
           <option value='markdownextra'>Markdown Extra</option>
           <option value='smartypants'>Smarty Pants</option>
         </select></p>\n"; 
+    } 
+    else if($type && $this['type'] == 'checkbox') {
+    	return "<p><input id='$id'{$type}{$class}{$name}{$value}{$autofocus}{$required}{$readonly}{$checked} /><label for='$id'>$label</label>{$messages}</p>\n";
+    }
+     else if($this['type'] == 'checkbox-multiple') {
+      $type = "type='checkbox'";
+      $name = " name='{$this['name']}[]'";
+      $res = null;
+      foreach($this['values'] as $val) {
+        $id = $val;
+        $label = $onlyValue  = htmlentities($val, ENT_QUOTES, $this->characterEncoding);
+        $value = " value='{$onlyValue}'";
+        //var_dump($val);
+        $checked = is_array($this['checked']) && in_array($val, $this['checked']) ? " checked='checked'" : null;  
+        $res .= "<p><input id='{$id}'{$type}{$class}{$name}{$value}{$autofocus}{$readonly}{$checked} /><label style='display:inline;' for='$id'>&nbsp;$label</label>{$messages}</p>\n"; 
+      }
+      return "<div><p>{$description}</p>{$res}</div>";
     } 
     else {
       return "<p><label for='$id'>$label</label><br><input id='$id'{$type}{$class}{$name}{$value}{$autofocus}{$readonly} />{$messages}</p>\n";                          
@@ -216,6 +236,33 @@ class CFormElementSelect extends CFormElement {
   }
 }
 
+class CFormElementCheckbox extends CFormElement {
+  /**
+   * Constructor
+   * @param string, name of the element
+   * @param array, attributes to set to the element. Default is an empty array
+   */
+  public function __construct($name, $attributes=array()) {
+    parent::__construct($name, $attributes);
+    $this['type'] = 'checkbox';
+    $this['checked']  = isset($attributes['checked']) ? $attributes['checked'] : false;
+    $this['value']    = isset($attributes['value']) ? $attributes['value'] : $name;
+  }
+}
+
+class CFormElementCheckboxMultiple extends CFormElement {
+  /**
+   * Constructor
+   * @param string name of the element.
+   * @param array attributes to set to the element. Default is an empty array.
+   */
+  public function __construct($name, $attributes=array()) {
+    parent::__construct($name, $attributes);
+    $this['type'] = 'checkbox-multiple';
+  }
+}
+
+
 class CForm implements ArrayAccess {
 
   public $form;     // array with settings for the form
@@ -270,34 +317,75 @@ EOD;
     }
     return $html;
   }
+
   
   // Check if a form was submitted and perform validation and call callbacks
   public function Check() {
     $validates = null;
     $callbackStatus = null;
     $values = array();
+    $remember = null;
+
+    // Remember output messages in session
+    if(isset($_SESSION['form-output'])) {
+      $this->output = $_SESSION['form-output'];
+      unset($_SESSION['form-output']);
+    }
+
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
       unset($_SESSION['form-failed']);
       $validates = true;
       foreach($this->elements as $element) {
         if(isset($_POST[$element['name']])) {
-          $values[$element['name']]['value'] = $element['value'] = $_POST[$element['name']];
+
+          // Multiple choices comes in the form of an array
+          if(is_array($_POST[$element['name']])) {
+            $values[$element['name']]['values'] = $element['checked'] = $_POST[$element['name']];
+          } else {
+            $values[$element['name']]['value'] = $element['value'] = $_POST[$element['name']];
+          }
+
+          // If the element is a checkbox, set its value of checked.
+          if($element['type'] === 'checkbox') {
+            $element['checked'] = true;
+          }
+
           if(isset($element['validation'])) {
-            $element['validation-pass'] = $element->Validate($element['validation']);
+            $element['validation-pass'] = $element->Validate($element['validation'], $this);
             if($element['validation-pass'] === false) {
               $values[$element['name']] = array('value'=>$element['value'], 'validation-messages'=>$element['validation-messages']);
               $validates = false;
             }
           }
+
+          if(isset($element['remember']) && $element['remember']) {
+            $values[$element['name']] = array('value'=>$element['value']);
+            $remember = true;
+          }
+
+          // Carry out the callback if the form validates
           if(isset($element['callback']) && $validates) {
             if(isset($element['callback-args'])) {
-                                            if(call_user_func_array($element['callback'], array_merge(array($this), $element['callback-args'])) === false) {
-                                              $callbackStatus = false;
-                                            }
-                                    } else {
-              if(call_user_func($element['callback'], $this) === false) {
-                                              $callbackStatus = false;
-              }
+              $callbackStatus = call_user_func_array($element['callback'], array_merge(array($this), $element['callback-args']));
+            } else {
+              $callbackStatus = call_user_func($element['callback'], $this);
+            }
+          }
+        } 
+
+        // The form element has no value set
+        else {
+          // If the element is a checkbox, clear its value of checked.
+          if($element['type'] === 'checkbox' || $element['type'] === 'checkbox-multiple') {
+            $element['checked'] = false;
+          }
+
+          // Do validation even when the form element is not set? Duplicate code, revise this section and move outside this if-statement?
+          if(isset($element['validation'])) {
+            $element['validation-pass'] = $element->Validate($element['validation'], $this);
+            if($element['validation-pass'] === false) {
+              $values[$element['name']] = array('value'=>$element['value'], 'validation-messages'=>$element['validation-messages']);
+              $validates = false;
             }
           }
         }

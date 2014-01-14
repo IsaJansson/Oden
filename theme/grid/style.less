@@ -162,7 +162,7 @@ body{margin:0;padding:0;color:@color;background-color:@bgcolor2;
  *
  */
 .tablecell() {display:table-cell;vertical-align:middle;text-align:center;}
-#outer-wrap-header{padding-top:@magic-number/2;margin-bottom:@magic-number/2;}
+#outer-wrap-header{padding-top:@magic-number/2;margin-bottom:@magic-number/2;background-color:#CCC;border-bottom:2px solid #000}
 #inner-wrap-header{.wrap();}
 #header{.column(12);}
 
@@ -171,7 +171,7 @@ body{margin:0;padding:0;color:@color;background-color:@bgcolor2;
  * Login menu
  */
 #login-menu{float:right;font-size:0.95em;
-  img.gravatar{vertical-align:middle;}
+  img.gravatar{vertical-align:middle; padding-right: 5px;}
   a{text-decoration:none;}
   a:hover{text-decoration:underline;}
 }
@@ -196,8 +196,8 @@ body{margin:0;padding:0;color:@color;background-color:@bgcolor2;
   ul.menu{list-style-type:none;padding:2px 8px;margin:0;
     li{padding:0;margin:0;display:inline;
       a{padding:6px 8px;text-decoration:none;border:2px solid transparent;
-        &:hover{background:#000;border:2px solid #f37b2f;}
-        &.selected{background:#000;border:2px solid #f37b2f;}
+        &:hover{background:#CCC;border:2px solid #000;}
+        &.selected{background:#CCC;border:2px solid #000;}
       }
     }
   }

@@ -1,6 +1,6 @@
 <?php
 /**
-* A class for...
+* A class to edit and show the contents of the database 
 * @package OdenCore
 */
 
@@ -14,6 +14,8 @@ class CCContent extends CObject implements IController {
     $content = new CMContent();
     $this->views->SetTitle('Content Controller')
                 ->AddInclude(__DIR__ . '/index.tpl.php', array(
+                  'is_authenticated'=>$this->user['isAuthenticated'], 
+                  'user'=>$this->user,
                   'contents' => $content->ListAll(),
                 ));
   }
@@ -39,19 +41,13 @@ class CCContent extends CObject implements IController {
                   'user'=>$this->user, 
                   'content'=>$content, 
                   'form'=>$form,
-                ));
+                ))
+                ->AddInclude(__DIR__ . '../../CCAdminControlPanel/sidebar.tpl.php', array('is_authenticated'=>$this->user['isAuthenticated'],'user'=>$this->user), 'sidebar');
   }
   
   // Create new content
   public function Create() {
     $this->Edit();
-  }
-
-  // Init the content database.
-  public function Init() {
-    $content = new CMContent();
-    $content->Init();
-    $this->RedirectToController();
   }
   
 

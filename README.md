@@ -7,11 +7,13 @@ Specifications
 --------------
 * PHP
 * SQLite
-* Writable directorys site/data (chmod 777)
+* Writable directorys site/data and theme/grid (chmod 777)
 
 Installation
 ------------
 To install this framework you can either clone from GitHub at http://github.com/IsaJansson/Oden or download the zip-file. When the download is complete make 'site/data' and 'theme/grid' writable and then point your browser to the folder you put Oden in and follow the instructions. 
+
+Some servers need to have a rewrite base which is set in the .htaccess file. if you have any problems when using internal links in Oden this should be the problem. to solve it you simply remove the # in the follwoing row and change to the correct path on your server. '# RewriteBase /~isja13/phpmvc/me/projekt/oden/'
 
 Usage
 -----
@@ -26,7 +28,11 @@ To create a new page you simply go to 'content/create' and set the 'Type' as 'pa
 To create a blogpost for your new blog you follow the steps of creating a new page only you set type as 'post' instead of 'page'.  
 
 ### Changes in the theme
-To change logo, title or slogan on your site you go to 'site/config.php' and at the bottom on that file you will find these settings. At the same place you can alter the footer as well. Right above these settings you will find the settings for the menu. There is a base-style in Oden which is based on semantic grid layout. This style is easy to overide in the site-specific stylesheet you will find in 'site/themes/mytheme/style.css'. The colorscheme used as default in Oden is set in this site-specific stylesheet. If you want to change the base theme of Oden you need to make 'theme/grid' writable as well due to its use of lessphp. 
+To change logo, title or slogan on your site you go to 'site/config.php' and at the bottom on that file you will find these settings. At the same place you can alter the footer as well. Right above these settings you will find the settings for the menu. There is a base-style in Oden which is based on semantic grid layout. This style is easy to overide in the site-specific stylesheet you will find in 'site/themes/mytheme/style.css'. The colorscheme used as default in Oden is set in this site-specific stylesheet. If you want to change the base theme of Oden you need to make 'theme/grid' writable as well due to its use of lessphp.
+
+Advanced usage
+--------------
+If you want to change more than described above you have a site controller in 'site/src/CCMyController'. With this controller you can set what you want to be displayed and how. The functions in that controller is connected to the different views in the same directory. If you only want to change the page that is already displayed you can change the page id. The page id you find in the first row in the index-function in CCMyController '$content = new CMContent(5);'. To create new pages in the site and keep the about-page you need to copy the existing ones and change the page id. when you made a new function in that controller you simply add it to the menu-array in 'config.php' and it will show in your menu.
 
 Use of external libraries
 -------------------------

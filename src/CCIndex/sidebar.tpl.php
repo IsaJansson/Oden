@@ -1,12 +1,9 @@
 <div class='box'>
 <h4>Controllers and methods</h4>
 
-<p>The following controllers exists. You enable and disable controllers in 
-<code>site/config.php</code>.</p>
-
 <ul>
 <?php foreach($controllers as $key => $val): ?>
-  <li><a href='<?=create_url($key)?>'><?=$key?></a></li>
+  <li><a href='<?=create_url($key)?>'><?=$key?></a> --></li>
 
   <?php if(!empty($val)): ?>
   <ul>

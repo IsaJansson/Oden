@@ -7,13 +7,13 @@ Specifications
 --------------
 * PHP
 * SQLite
-* Writable directorys site/data and theme/grid (chmod 777)
+* Writable directorys site/data (chmod 777)
 
 Installation
 ------------
-To install this framework you can either clone from GitHub at http://github.com/IsaJansson/Oden or download the zip-file. When the download is complete make `site/data` and `theme/grid` writable and then point your browser to the folder you put Oden in and follow the instructions. 
+To install this framework you can either clone from GitHub at http://github.com/IsaJansson/Oden or download the zip-file from the same place. When the download is complete make `site/data` writable and then point your browser to the folder you put Oden in and follow the instructions. 
 
-Some servers need to have a rewrite base which is set in the .htaccess file. if you have any problems when using internal links in Oden this should be the problem. to solve it you simply remove the # in the follwoing row and change to the correct path on your server. `# RewriteBase /~isja13/phpmvc/me/projekt/oden/`
+Some servers need to have a rewrite base which is set in the .htaccess file. if you have any problems during the set up of Oden this could be the problem. To solve it you simply change the following row to the correct path on your server. `RewriteBase /~isja13/phpmvc/me/projekt/oden/`. If you dosent need the rewrite base you put a # in front of that row. 
 
 Usage
 -----
